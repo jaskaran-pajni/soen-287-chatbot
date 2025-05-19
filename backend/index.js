@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const fetch = require('node-fetch'); 
 const dotenv = require('dotenv');
+const fs = require('fs');
 
 dotenv.config();
 
@@ -94,11 +95,20 @@ User asked: ${message}
   }
 });
 
-// Serve frontend
-app.use(express.static(path.join(__dirname, '../frontend/build')));
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '../frontend/build', 'index.html'));
-});
+// // Serve frontend
+// app.use(express.static(path.join(__dirname, '../frontend/build')));
+// app.get('*', (req, res) => {
+//   res.sendFile(path.resolve(__dirname, '../frontend/build', 'index.html'));
+// });
+
+const frontendPath = path.join(__dirname, '../frontend/build');
+if (fs.existsSync(frontendPath)) {
+  app.use(express.static(frontendPath));
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(frontendPath, 'index.html'));
+  });
+}
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
